@@ -55,9 +55,8 @@ artifacts:
     - 'dist/**/*'
     - 'scripts/**/*'
     - 'appspec.yml'
-  base-directory: frontend
   name: frontend-build-$(date +%Y%m%d-%H%M%S)
 
 cache:
   paths:
-    - 'frontend/node_modules/**/*'
+    - './node_modules/**/*'
