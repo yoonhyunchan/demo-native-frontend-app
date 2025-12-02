@@ -1,0 +1,64 @@
+version: 0.2
+
+env:
+  variables:
+    NODE_VERSION: "18"
+  # parameter-store:
+    # AWS Systems Manager Parameter Store에서 가져오기 (선택사항)
+    # API_URL: /myapp/api-url
+  # secrets-manager:
+    # AWS Secrets Manager에서 가져오기 (선택사항)
+    # API_KEY: myapp/secrets:api_key
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo "Installing dependencies..."
+      - cd frontend
+      - npm ci --prefer-offline --no-audit
+
+  pre_build:
+    commands:
+      - echo "Pre-build phase..."
+      - echo "Node version:"
+      - node --version
+      - echo "NPM version:"
+      - npm --version
+      
+  build:
+    commands:
+      - echo "Building application..."
+      - echo "API_URL = $API_URL"
+      # 런타임 config.js 생성
+      # - |
+      #   cat > public/config.js <<EOF
+      #   window.APP_CONFIG = {
+      #     API_URL: '${API_URL:-http://localhost:8000}'
+      #   }
+      #   EOF
+      - npm run build
+      - echo "Build completed successfully"
+
+  post_build:
+    commands:
+      - echo "Post-build phase..."
+      - echo "Artifact structure:"
+      - ls -la
+      - echo "Dist contents:"
+      - ls -la dist/
+      - echo "Scripts:"
+      - ls -la scripts/
+
+artifacts:
+  files:
+    - 'dist/**/*'
+    - 'scripts/**/*'
+    - 'appspec.yml'
+  base-directory: frontend
+  name: frontend-build-$(date +%Y%m%d-%H%M%S)
+
+cache:
+  paths:
+    - 'frontend/node_modules/**/*'
