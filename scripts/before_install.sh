@@ -27,7 +27,6 @@ if ! command -v nginx &> /dev/null; then
     sudo yum install -y nginx || sudo apt-get install -y nginx
 fi
 
-sudo sed -i '/server {/,/}/d' /etc/nginx/nginx.conf
 
 echo "Before install completed"
 exit 0
